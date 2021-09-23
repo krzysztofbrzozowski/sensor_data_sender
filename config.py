@@ -1,3 +1,3 @@
-APN = 'play'
+APN = 'internet'
 
 API_URI = ''

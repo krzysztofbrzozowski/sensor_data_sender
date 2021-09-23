@@ -18,26 +18,45 @@ class UART:
     def get_rx_buf(self):
         return self._rx_buf
 
-    def set_rx_buf(self, *arg):
+    def set_rx_buf(self, arg):
         self._rx_buf = arg
 
     def send_cmd(self, cmd):
         self._serial.write(f'{cmd}\r\n'.encode('ascii'))
-        time.sleep(0.05)
+        time.sleep(0.01)
+        self.set_rx_buf([])
 
-    def query_cmd(self, cmd):
+    def send_byte(self, cmd):
+        self._serial.write(serial.to_bytes([cmd]))
+
+    def query_cmd(self, cmd, expected, timeout):
+        timeout = time.time() + timeout if timeout else None
+
         self._serial.write(f'{cmd}\r\n'.encode('ascii'))
-        time.sleep(0.05)
+        time.sleep(0.1)
+
+        if expected and timeout:
+            while expected not in self.get_rx_buf() and time.time() < timeout:
+                pass
+
         tmp = self.get_rx_buf()
         self.set_rx_buf([])
         return tmp
 
+    # def query_cmd(self, cmd, expected, timeout):
+    #     self._serial.write(f'{cmd}\r\n'.encode('ascii'))
+    #     time.sleep(0.1)
+    #     tmp = self.get_rx_buf()
+    #     self.set_rx_buf([])
+    #     return tmp
 
     def serial_listener(self):
         while True:
-            read = self._serial.read()
-            if read != bytes() and read != b'\x00':
+            read = self._serial.readline()
+            if read != bytes():
+                read = read.strip().decode()
                 self._rx_buf.append(read)
+                print(self._rx_buf)
 
     def start_serial_listen_thread(self):
         if not self._serial.isOpen():
