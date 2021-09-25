@@ -1,0 +1,4 @@
+TO TEST:
+-long and short JSON messages
+-response is always having non None value if it is True
+-post and get the same data

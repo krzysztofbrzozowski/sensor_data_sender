@@ -1,10 +1,11 @@
-import time
+import json
 from datetime import datetime
+import requests
+import time
 import sys
 
 import config
 from uart import *
-
 
 
 class SIM7000:
@@ -25,7 +26,7 @@ class SIM7000:
 
     # TODO call this method only once automatically
     @classmethod
-    def configure_apn(cls):
+    def initialize_apn(cls):
         if not cls._apn:
             sys.exit('Set APN first')
 
@@ -37,7 +38,54 @@ class SIM7000:
         cls._uart.query_cmd(f'AT+CIFSR', '.', timeout=1), 'No IP address get'
 
     @classmethod
-    def send_message(cls, phone_no, msg):
+    def initialize_requests(cls):
+        cls._uart.query_cmd(f'AT+SAPBR=3,1,"APN","{cls._apn}"', expected='OK', timeout=1)  # Configure bearer profile 1
+        cls._uart.query_cmd(f'AT+SAPBR=1,1', expected='OK', timeout=1)                     # To open bearer
+        cls._uart.query_cmd(f'AT+HTTPINIT', expected='OK', timeout=1)
+        cls._uart.query_cmd(f'AT+HTTPPARA="CID",1', expected='OK', timeout=1)              # Set parameters for HTTP session
+
+    @classmethod
+    def deinitialize_requests(cls):
+        cls._uart.query_cmd(f'AT+HTTPTERM', expected='OK', timeout=1)           # Terminate HTTP service
+        cls._uart.query_cmd(f'AT+SAPBR=0,1', expected='OK', timeout=1)          # To close bearer
+
+    @classmethod
+    def send_GET_request(cls, url: str, timeout: int = 10):
+        """Sending the GET request
+        :param: url: URL of the api containing exact address where get data from
+        :param: timeout: when not receive any JSON data, timeout request
+        :return: JSON data if any received, else None"""
+        timeout = time.time() + timeout
+
+        cls._uart.query_cmd(f'AT+HTTPPARA="URL","{url}"', expected='OK', timeout=1)         # Init HTTP service
+        cls._uart.query_cmd(f'AT+HTTPACTION=0', expected='OK', timeout=1)                   # GET session start
+
+        response = cls._uart.query_cmd(f'AT+HTTPREAD', expected='OK', timeout=1)
+        while not any('{' and '}' in word for word in response) and time.time() < timeout:
+
+            response = cls._uart.query_cmd(f'AT+HTTPREAD', expected='OK', timeout=1)
+            time.sleep(1)
+
+        try:
+            return json.loads(response[response.index('OK') - 1])
+
+        except Exception as e:
+            print(e)
+            return None
+
+    @classmethod
+    def send_POST_request(cls, url, data):
+        cls._uart.query_cmd(f'AT+HTTPPARA="URL","{url}"', expected='OK', timeout=1)  # Init HTTP service
+
+        cls._uart.query_cmd(f'AT+HTTPPARA="CONTENT","application/json"', expected='OK', timeout=1)
+        request = cls._uart.query_cmd(f'AT+HTTPDATA={len(data)},10000', expected='OK', timeout=5)       #TODO - 10000?
+
+        cls._uart.query_cmd(f'AT+HTTPACTION=1', expected='OK', timeout=1)
+
+        return request
+
+    @classmethod
+    def send_sms(cls, phone_no, msg):
         cls._uart.query_cmd(f'AT+CMGF=1', 'OK', 2)
         cls._uart.query_cmd(f'AT+CNMI=2,1,0,0,0', 'OK', 2)
         cls._uart.query_cmd(f'AT+CMGS="{phone_no}"', 'OK', 2)
@@ -47,18 +95,3 @@ class SIM7000:
     @classmethod
     def send_byte(cls, byte):
         cls._uart.send_byte(byte)
-
-
-if __name__ == '__main__':
-    SIM7000.initialize_serial()
-    SIM7000.configure_apn()
-
-    message = {
-        'date': datetime.now().strftime("%d.%m.%y - %H:%M:%S"),
-        'text': 'test'
-    }
-
-    SIM7000.send_message(phone_no='xxxxxxxxx', msg=message)
-
-    # print(message)
-    pass

@@ -29,7 +29,7 @@ class UART:
     def send_byte(self, cmd):
         self._serial.write(serial.to_bytes([cmd]))
 
-    def query_cmd(self, cmd, expected, timeout):
+    def query_cmd(self, cmd, expected=None, timeout=None):
         timeout = time.time() + timeout if timeout else None
 
         self._serial.write(f'{cmd}\r\n'.encode('ascii'))
@@ -37,6 +37,10 @@ class UART:
 
         if expected and timeout:
             while expected not in self.get_rx_buf() and time.time() < timeout:
+            # while not any(expected in word for word in self.get_rx_buf()) and time.time() < timeout:
+                pass
+        if timeout:
+            while time.time() < timeout:
                 pass
 
         tmp = self.get_rx_buf()
