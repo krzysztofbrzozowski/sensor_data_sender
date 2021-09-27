@@ -75,14 +75,16 @@ class SIM7000:
 
     @classmethod
     def send_POST_request(cls, url, data):
-        cls._uart.query_cmd(f'AT+HTTPPARA="URL","{url}"', expected='OK', timeout=1)  # Init HTTP service
+        data = '{"mac_address": "00:00:00:00:00:00", "temperature":11, "humidity":22, "pressure":777, "adc":3.9}'
+
+        cls._uart.query_cmd(f'AT+HTTPPARA="URL","{url}"', expected='OK', timeout=1)                 # Init HTTP service
 
         cls._uart.query_cmd(f'AT+HTTPPARA="CONTENT","application/json"', expected='OK', timeout=1)
-        request = cls._uart.query_cmd(f'AT+HTTPDATA={len(data)},10000', expected='OK', timeout=5)       #TODO - 10000?
-
-        cls._uart.query_cmd(f'AT+HTTPACTION=1', expected='OK', timeout=1)
-
-        return request
+        cls._uart.query_cmd(f'AT+HTTPDATA={len(data)},1000', expected='OK', timeout=2)             #1000 - max time for input the data
+        cls._uart.clear_all()
+        time.sleep(0.1)
+        cls._uart.query_data(f'{data}', timeout=5)
+        cls._uart.query_cmd(f'AT+HTTPACTION=1', expected='OK', timeout=2)
 
     @classmethod
     def send_sms(cls, phone_no, msg):

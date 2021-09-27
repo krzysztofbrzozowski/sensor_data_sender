@@ -5,7 +5,7 @@ class IoTMod:
     _initialize_serial = False
     _initialize_apn = False
 
-    _initialize_requests = True
+    _initialize_requests = False
     _initialize_bearer = False
 
     @classmethod
@@ -24,12 +24,19 @@ class IoTMod:
         cls._initialize_requests = True
 
     @classmethod
-    def send_GET_request(cls, url):
+    def send_GET_request(cls, url: str):
         if not cls._initialize_requests:
             cls.initialize_requests()
 
         response = SIM7000.send_GET_request(url=url)
         return response
 
+    @classmethod
+    def send_POST_request(cls, url: str, data: str):
+        if not cls._initialize_requests:
+            cls.initialize_requests()
+
+        response = SIM7000.send_POST_request(url=url, data=data)
+        return response
 
 

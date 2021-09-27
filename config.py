@@ -1,3 +1,4 @@
 APN = 'internet'
 
-API_URL = ''
+# API_URL = ''
+
