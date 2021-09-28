@@ -74,16 +74,13 @@ class SIM7000:
             return None
 
     @classmethod
-    def send_POST_request(cls, url, data):
-        data = '{"mac_address": "00:00:00:00:00:00", "temperature":11, "humidity":22, "pressure":777, "adc":3.9}'
-
+    def send_POST_request(cls, url: str, payload: str, content: str = 'JSON'):
         cls._uart.query_cmd(f'AT+HTTPPARA="URL","{url}"', expected='OK', timeout=1)                 # Init HTTP service
-
-        cls._uart.query_cmd(f'AT+HTTPPARA="CONTENT","application/json"', expected='OK', timeout=1)
-        cls._uart.query_cmd(f'AT+HTTPDATA={len(data)},1000', expected='OK', timeout=2)             #1000 - max time for input the data
-        cls._uart.clear_all()
-        time.sleep(0.1)
-        cls._uart.query_data(f'{data}', timeout=5)
+        cls._uart.query_cmd(f'AT+HTTPPARA="CONTENT",'
+                            f'{"application/json" if content == "JSON" else "application/x-www-form-urlencoded"}',
+                            expected='OK', timeout=1)
+        cls._uart.query_cmd(f'AT+HTTPDATA={len(payload)},2000', expected='OK', timeout=2)           # 1000 - max time for input the data
+        cls._uart.query_data(f'{payload}', timeout=2)
         cls._uart.query_cmd(f'AT+HTTPACTION=1', expected='OK', timeout=2)
 
     @classmethod

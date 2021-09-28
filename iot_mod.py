@@ -32,11 +32,11 @@ class IoTMod:
         return response
 
     @classmethod
-    def send_POST_request(cls, url: str, data: str):
+    def send_POST_request(cls, url: str, payload: str, content: str = 'JSON'):
         if not cls._initialize_requests:
             cls.initialize_requests()
 
-        response = SIM7000.send_POST_request(url=url, data=data)
+        response = SIM7000.send_POST_request(url=url, payload=payload, content=content)
         return response
 
 
