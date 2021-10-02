@@ -2,3 +2,7 @@ TO TEST:
 -long and short JSON messages
 -response is always having non None value if it is True
 -post and get the same data
+
+# SOIL SENSOR TEST
+-check if the sensors are visible at the system
+-get read of soil sensors - temperature and moisture
