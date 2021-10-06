@@ -10,18 +10,21 @@ class IoTMod:
 
     @classmethod
     def initialize_serial(cls):
-        SIM7000.initialize_serial()
-        cls._initialize_serial = True
+        if not cls._initialize_serial:
+            SIM7000.initialize_serial()
+            cls._initialize_serial = True
 
     @classmethod
     def initialize_apn(cls):
-        SIM7000.initialize_apn()
-        cls._initialize_apn = True
+        if not cls._initialize_apn:
+            SIM7000.initialize_apn()
+            cls._initialize_apn = True
 
     @classmethod
     def initialize_requests(cls):
-        SIM7000.initialize_requests()
-        cls._initialize_requests = True
+        if not cls._initialize_requests:
+            SIM7000.initialize_requests()
+            cls._initialize_requests = True
 
     @classmethod
     def send_GET_request(cls, url: str):

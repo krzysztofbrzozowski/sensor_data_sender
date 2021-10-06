@@ -20,8 +20,19 @@ class SIM7000:
             time.sleep(0.1)
 
     @classmethod
+    def deinitialize_serial(cls):
+        """
+        Deinitialize serial listening thread - usable when running tests
+        """
+        cls._uart.stop_serial_listen_thread()
+
+    @classmethod
     def send_cmd(cls, cmd):
         cls._uart.send_cmd(cmd)
+
+    @classmethod
+    def query_cmd(cls, cmd, timeout):
+        return cls._uart.query_cmd(cmd, timeout=timeout)
 
     # TODO call this method only once automatically
     @classmethod

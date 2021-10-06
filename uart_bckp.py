@@ -1,6 +1,7 @@
-import threading
 import time
 import serial
+# from threading import Thread
+import threading
 import config
 
 
@@ -16,7 +17,7 @@ class UART:
         )
         self._rx_buf = []
         self._serial_thread = None
-        self._stop_event = threading.Event()
+        self._serial_kill = threading.Event()
 
     def get_rx_buf(self):
         return self._rx_buf
@@ -75,8 +76,8 @@ class UART:
     #     self.set_rx_buf([])
     #     return tmp
 
-    def serial_listener(self):
-        while not self._stop_event.is_set():
+    def serial_listener(self, stop_event, nothing):
+        while True:
             read = self._serial.readline()
             if read != bytes():
                 read = read.strip().decode()
@@ -88,12 +89,13 @@ class UART:
     def start_serial_listen_thread(self):
         if not self._serial.isOpen():
             self._serial.open()
-        self._serial_thread = threading.Thread(target=self.serial_listener, args=())
+        self._serial_thread = threading.Thread(target=self.serial_listener, args=(self._serial_kill, 'task'))
         self._serial_thread.start()
 
     def stop_serial_listen_thread(self):
-        self._stop_event.set()
+        self._serial_kill.set()
         self._serial_thread.join()
+        # self._serial_thread.do_run = False
 
     def clear_all(self):
         self._serial.flushInput()
