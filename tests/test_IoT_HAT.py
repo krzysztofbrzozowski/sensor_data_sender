@@ -21,5 +21,12 @@ class TestIoTHAT:
 
         assert self.result is True
 
+    def test_get_date_form_server(self):
+        from dev_sim7000 import SIM7000
+
+        SIM7000.initialize_serial()
+
+
+
 
 
