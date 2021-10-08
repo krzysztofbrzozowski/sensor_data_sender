@@ -15,6 +15,12 @@ class IoTMod:
             cls._initialize_serial = True
 
     @classmethod
+    def deinitialize_serial(cls):
+        if cls._initialize_serial:
+            SIM7000.deinitialize_serial()
+            cls._initialize_serial = False
+
+    @classmethod
     def initialize_apn(cls):
         if not cls._initialize_apn:
             SIM7000.initialize_apn()

@@ -68,19 +68,27 @@ class UART:
         self.set_rx_buf([])
         return tmp
 
-    # def query_cmd(self, cmd, expected, timeout):
-    #     self._serial.write(f'{cmd}\r\n'.encode('ascii'))
-    #     time.sleep(0.1)
-    #     tmp = self.get_rx_buf()
-    #     self.set_rx_buf([])
-    #     return tmp
+    # def serial_listener(self):
+    #     while not self._stop_event.is_set():
+    #         read = self._serial.readline()
+    #         if read != bytes():
+    #             print(read)
+    #             read = read.strip().decode()
+    #             self._rx_buf.append(read)
+    #
+    #             if config.DEBUG:
+    #                 print(self._rx_buf)
 
     def serial_listener(self):
         while not self._stop_event.is_set():
             read = self._serial.readline()
             if read != bytes():
-                read = read.strip().decode()
-                self._rx_buf.append(read)
+                try:
+                    read = read.strip().decode()
+                    self._rx_buf.append(read)
+                except BaseException as e:
+                    if config.DEBUG:
+                        print(e)
 
                 if config.DEBUG:
                     print(self._rx_buf)

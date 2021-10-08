@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 import time
 import sys
+import platform
 
 import config
 from uart import *
@@ -9,8 +10,7 @@ from uart import *
 
 class SIM7000:
     _apn = config.APN
-    # _uart = UART(port='/dev/ttyS0', baudrate=115200)
-    _uart = UART(port='/dev/tty.usbserial-FT9JARY8', baudrate=115200)
+    _uart = UART(port=config.SERIAL_DARWIN if platform.system() == 'Darwin' else config.SERIAL_LINUX, baudrate=9600)
 
     @classmethod
     def initialize_serial(cls):
