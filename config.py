@@ -1,7 +1,8 @@
 DEBUG = True
 
+SERIAL_DARWIN = '/dev/cu.usbserial-FT9JARY8'
+SERIAL_LINUX = '/dev/ttyS0'
 
-SERIAL = '/dev/tty.usbserial-FT9JARY8'
 APN = 'internet'
 PHONE_NO = ''
 
