@@ -24,17 +24,10 @@ if __name__ == '__main__':
 
     # Post data to API using local connection
     post_url = f'{config.API_URL}/post-pms-data'
-    payload_sensor = {'hex_address': 38, 'temperature': 23, 'humidity': 500}
-
-    payload_sensors = {
-        'ss_sensor_0x36': {'hex_address': 31, 'temperature': 21, 'humidity': 501},
-        'ss_sensor_0x37': {'hex_address': 32, 'temperature': 22, 'humidity': 502},
-        'ss_sensor_0x38': {'hex_address': 33, 'temperature': 23, 'humidity': 503}
-    }
 
     payload_plant_readings = {
         'readings': [
-            {'hex_address': 31, 'temperature': 21, 'humidity': 501},
+            {'hex_address': 0x31, 'temperature': 21, 'humidity': 501},
             {'hex_address': 32, 'temperature': 22, 'humidity': 502},
             {'hex_address': 33, 'temperature': 23, 'humidity': 503}
         ],
