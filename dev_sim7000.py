@@ -14,6 +14,7 @@ class SIM7000:
 
     @classmethod
     def initialize_serial(cls):
+        # TODO There is no general timeout in 'initialize_serial' method: write max retry and the test for it
         cls._uart.start_serial_listen_thread()
         while 'OK' not in cls._uart.query_cmd('AT', 'OK', timeout=0.1):
             cls._uart.query_cmd('AT', 'OK', timeout=0.1)
@@ -61,7 +62,7 @@ class SIM7000:
 
     @classmethod
     def send_GET_request(cls, url: str, timeout: int = 10):
-        """Sending the GET request
+        """Send GET request with default timeout 10s
         :param: url: URL of the api containing exact address where get data from
         :param: timeout: when not receive any JSON data, timeout request
         :return: JSON data if any received, else None"""
@@ -70,9 +71,9 @@ class SIM7000:
         cls._uart.query_cmd(f'AT+HTTPPARA="URL","{url}"', expected='OK', timeout=1)         # Init HTTP service
         cls._uart.query_cmd(f'AT+HTTPACTION=0', expected='OK', timeout=1)                   # GET session start
 
+        # TODO Can be removed, only while not loop leave?
         response = cls._uart.query_cmd(f'AT+HTTPREAD', expected='OK', timeout=1)
         while not any('{' and '}' in word for word in response) and time.time() < timeout:
-
             response = cls._uart.query_cmd(f'AT+HTTPREAD', expected='OK', timeout=1)
             time.sleep(1)
 

@@ -1,13 +1,13 @@
 import config
 # from dev_sim7000 import *
 # from dev_stemma import *
-# from iot_mod import IoTMod as iot_mod
+from iot_mod import IoTMod as iot_mod
 from API_requests import APIRequests as api_requests
 # import asyncio
 
 
 if __name__ == '__main__':
-    # iot_mod.initialize_serial()
+    iot_mod.initialize_serial()
     # iot_mod.initialize_apn()
     #
     # current_time = iot_mod.send_GET_request(url=f'{config.API_URL}/timesync')
