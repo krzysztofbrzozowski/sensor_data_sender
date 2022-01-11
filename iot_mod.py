@@ -1,4 +1,5 @@
 from dev_sim7000 import *
+from sysvar_manager import SysVarManager as SysVarMgr
 
 
 class IoTMod:
