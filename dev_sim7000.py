@@ -15,8 +15,9 @@ class SIM7000:
     @classmethod
     def initialize_serial(cls):
         # TODO There is no general timeout in 'initialize_serial' method: write max retry and the test for it
+        # TODO Use only True or False
         cls._uart.start_serial_listen_thread()
-        while 'OK' not in cls._uart.query_cmd('AT', 'OK', timeout=0.1):
+        while 'OK' not in cls._uart.query_cmd('AT', expected=None, timeout=0.1):
             cls._uart.query_cmd('AT', 'OK', timeout=0.1)
             time.sleep(0.1)
 
@@ -36,17 +37,19 @@ class SIM7000:
         return cls._uart.query_cmd(cmd, timeout=timeout)
 
     # TODO call this method only once automatically
+    # TODO need to return something for iotmod config
     @classmethod
     def initialize_apn(cls):
         if not cls._apn:
             sys.exit('Set APN first')
 
-        # Set APN
-        assert 'OK' in cls._uart.query_cmd(f'AT+CSTT="{cls._apn}"', 'OK', timeout=2), 'APN not set'
-        # Bring up network
-        assert 'OK' in cls._uart.query_cmd(f'AT+CIICR', 'OK', timeout=10), 'Bringing up network failed'
-        # Get IP address
-        cls._uart.query_cmd(f'AT+CIFSR', '.', timeout=1), 'No IP address get'
+        # Check if APN is set already
+        if not cls._uart.send_cmd(f'AT+CSTT?', expected=cls._apn, timeout=10):
+            print('not initialized!')
+            cls._uart.query_cmd(f'AT+CSTT="{cls._apn}"', expected='OK', timeout=2)      # Set APN
+            cls._uart.query_cmd(f'AT+CIICR', expected='OK', timeout=10)                 # Bring up network
+
+        cls._uart.query_cmd(f'AT+CIFSR', expected='.', timeout=1)                       # Get IP address
 
     @classmethod
     def initialize_requests(cls):

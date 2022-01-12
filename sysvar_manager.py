@@ -5,7 +5,7 @@ import shelve
 
 
 class SysVarManager:
-    SYSVAR_DB = 'sys_var.db'
+    SYSVAR_DB = 'sysvar/sysvar.db'
 
     @classmethod
     def set_sysvar(cls, sysvar: str, value):
@@ -19,3 +19,9 @@ class SysVarManager:
         sysvar_value = sh[sysvar]
         sh.close()
         return sysvar_value
+
+    # TODO get sysvars form list
+    @classmethod
+    def init_sysvar_db(cls):
+        cls.set_sysvar('uart_init', 'None')
+
