@@ -6,6 +6,7 @@ import platform
 
 import config
 from uart import *
+from logger import logger
 
 
 class SIM7000:
@@ -20,6 +21,9 @@ class SIM7000:
         while 'OK' not in cls._uart.query_cmd('AT', expected=None, timeout=0.1):
             cls._uart.query_cmd('AT', 'OK', timeout=0.1)
             time.sleep(0.1)
+
+        logger.Logger.log_info('Serial initialized')
+
 
     @classmethod
     def deinitialize_serial(cls):
@@ -44,12 +48,14 @@ class SIM7000:
             sys.exit('Set APN first')
 
         # Check if APN is set already
+        # TODO add the while method as well like in intialize serial
         if not cls._uart.send_cmd(f'AT+CSTT?', expected=cls._apn, timeout=10):
             print('not initialized!')
             cls._uart.query_cmd(f'AT+CSTT="{cls._apn}"', expected='OK', timeout=2)      # Set APN
             cls._uart.query_cmd(f'AT+CIICR', expected='OK', timeout=10)                 # Bring up network
 
-        cls._uart.query_cmd(f'AT+CIFSR', expected='.', timeout=1)                       # Get IP address
+
+        cls._uart.query_cmd(f'AT+CIFSR', expected='.', timeout=10)                       # Get IP address
 
     @classmethod
     def initialize_requests(cls):

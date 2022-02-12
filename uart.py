@@ -3,6 +3,7 @@ import time
 import serial
 import config
 
+from logger.logger import Logger
 
 class UART:
     def __init__(self, port: str, baudrate: int):
@@ -70,9 +71,15 @@ class UART:
             while not any(expected in s for s in self.get_rx_buf()) and time.time() < timeout:
                 pass
 
-        if timeout:
+            if time.time() >= timeout:
+                Logger.log_warning(f'Timeout occurred while: {cmd}')
+
+        if not expected and timeout:
             while time.time() < timeout:
                 pass
+
+            if time.time() >= timeout:
+                Logger.log_warning(f'Timeout occurred while: {cmd}')
 
         local_rx_buf = self.get_rx_buf()
         self.set_rx_buf([])
@@ -116,11 +123,9 @@ class UART:
                     read = read.strip().decode()
                     self._rx_buf.append(read)
                 except BaseException as e:
-                    if config.DEBUG:
-                        print(e)
+                    Logger.log_warning(e)
 
-                if config.DEBUG:
-                    print(self._rx_buf)
+                Logger.log_debug(f'Serial output: {self._rx_buf}')
 
     def start_serial_listen_thread(self):
         if not self._serial.isOpen():
