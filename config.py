@@ -1,6 +1,7 @@
 DEBUG = True
 
-SERIAL_DARWIN = '/dev/cu.usbserial-FT9JARY8'
+# SERIAL_DARWIN = '/dev/cu.usbserial-FT9JARY8'
+SERIAL_DARWIN = '/dev/tty.usbserial-0001'
 SERIAL_LINUX = '/dev/ttyS0'
 
 APN = 'internet'

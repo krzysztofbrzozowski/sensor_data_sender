@@ -11,7 +11,7 @@ if __name__ == '__main__':
     iot_mod.initialize_serial()
     iot_mod.initialize_apn()
     #
-    # current_time = iot_mod.send_GET_request(url=f'{config.API_URL}/timesync')
+    current_time = iot_mod.send_GET_request(url=f'{config.API_URL}/timesync')
     # print('GET MESSAGE', current_time)
     #
     # payload = '{"mac_address": "00:00:00:00:00:00", "temperature": "22", "humidity": "33", "pressure": "888", "adc": "4.1"}'

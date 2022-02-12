@@ -54,6 +54,7 @@ class SIM7000:
             cls._uart.query_cmd(f'AT+CSTT="{cls._apn}"', expected='OK', timeout=2)      # Set APN
             cls._uart.query_cmd(f'AT+CIICR', expected='OK', timeout=10)                 # Bring up network
 
+        time.sleep(5)
 
         cls._uart.query_cmd(f'AT+CIFSR', expected='.', timeout=10)                       # Get IP address
 
