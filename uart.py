@@ -40,10 +40,12 @@ class UART:
         :param: timeout: timeout
         :return: True if expected answer occurred else False"""
 
-        timeout = time.time() + timeout if timeout else None
-
         self._serial.write(f'{cmd}\r\n'.encode('ascii'))
+        Logger.log_info(f'Sent command: {cmd}; Expecting in answer: {expected}; Timeout: {timeout};')
+
         time.sleep(0.1)
+
+        timeout = time.time() + timeout if timeout else None
 
         # Wait for occurrence of expected string
         if expected and timeout:
@@ -61,10 +63,12 @@ class UART:
             return False
 
     def query_cmd(self, cmd, expected=None, timeout=None):
-        timeout = time.time() + timeout if timeout else None
-
         self._serial.write(f'{cmd}\r\n'.encode('ascii'))
+        Logger.log_info(f'Sent command: {cmd}; Expecting in answer: {expected}; Timeout: {timeout};')
+
         time.sleep(0.1)
+
+        timeout = time.time() + timeout if timeout else None
 
         # Wait for occurrence of expected string
         if expected and timeout:
@@ -123,9 +127,10 @@ class UART:
                     read = read.strip().decode()
                     self._rx_buf.append(read)
                 except BaseException as e:
-                    Logger.log_warning(e)
+                    Logger.log_error(e)
 
                 Logger.log_debug(f'Serial output: {self._rx_buf}')
+                # time.sleep(0.01)
 
     def start_serial_listen_thread(self):
         if not self._serial.isOpen():

@@ -38,3 +38,7 @@ class Logger:
     def log_warning(cls, msg: any) -> None:
         cls.log.warning(msg)
 
+    @classmethod
+    def log_error(cls, msg: any) -> None:
+        cls.log.error(msg)
+
