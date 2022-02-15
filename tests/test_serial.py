@@ -32,14 +32,14 @@ class TestSerial:
         assert True
 
     # Method send_cmd tests
-    def test_send_cmd_no_command_to_send(self):
+    def test_send_cmd_no_command_to_send_returns_false(self):
         self.uart.start_serial_listen_thread()
         self.result = self.uart.send_cmd(command=None, expected=None, timeout=None)
         self.uart.stop_serial_listen_thread()
 
         assert self.result is False
 
-    def test_send_cmd_expected_not_in_answer(self):
+    def test_send_cmd_expected_not_in_answer_returns_false(self):
         self.uart.start_serial_listen_thread()
         self.result = self.uart.send_cmd(command='AT', expected='not_in_answer', timeout=1)
         self.uart.stop_serial_listen_thread()
@@ -58,8 +58,12 @@ class TestSerial:
         self.result = True if abs(time_end) < 1 + config.MESSAGE_PROPAGATION_TIME + 0.01 else False
         assert self.result is True
 
-    def test_send_cmd_returning_true(self):
-        pass
+    def test_send_cmd_returning_true_if_everything_ok(self):
+        self.uart.start_serial_listen_thread()
+        self.result = self.uart.send_cmd(command='AT', expected='OK', timeout=1)
+        self.uart.stop_serial_listen_thread()
+
+        assert self.result is True
 
     def test_any_message_received_via_serial(self):
         self.uart.start_serial_listen_thread()
