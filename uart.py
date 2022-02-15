@@ -5,6 +5,7 @@ import config
 
 from logger.logger import Logger
 
+
 class UART:
     def __init__(self, port: str, baudrate: int):
         self._serial = serial.Serial(
@@ -33,25 +34,47 @@ class UART:
     def send_byte(self, cmd):
         self._serial.write(serial.to_bytes([cmd]))
 
-    def send_cmd(self, cmd, expected=None, timeout=None):
-        """Send cmd and await for expected answer
-        :param: cmd: command to send
-        :param: expected: expected answer
-        :param: timeout: timeout
-        :return: True if expected answer occurred else False"""
+    def send_cmd(self, command: str = None, expected: str = None, timeout: float = None) -> bool:
+        """
+        Send command and await for expected answer if defined, else wait for timeout
 
-        self._serial.write(f'{cmd}\r\n'.encode('ascii'))
-        Logger.log_info(f'Sent command: {cmd}; Expecting in answer: {expected}; Timeout: {timeout};')
+        Parameters
+        ----------
+        command: str
+            Command send via UART
+        expected: str
+            Expected answer to find in serial output
+        timeout: float
+            Timeout for expecting answer or only wait time
 
-        time.sleep(0.1)
+        Returns
+        -------
+        bool
+            True if expected answer occurred else False
+        """
 
-        timeout = time.time() + timeout if timeout else None
+        # Exit function with warning if no command to send defined
+        if not command:
+            Logger.log_warning(f'No command to send defined')
+            return False
+
+        Logger.log_info(f'Sent command: {command}; Expecting in answer: {expected}; Timeout: {timeout};')
+
+        self._serial.write(f'{command}\r\n'.encode('ascii'))
+        time.sleep(config.MESSAGE_PROPAGATION_TIME)
+
+        timeout = time.time() + timeout
 
         # Wait for occurrence of expected string
         if expected and timeout:
             while not any(expected in s for s in self.get_rx_buf()) and time.time() < timeout:
                 pass
 
+            if time.time() >= timeout:
+                Logger.log_warning(f'Timeout occurred while sending: {command} and waiting for: {expected}')
+                return False
+
+        # If only timeout is defined, wait max time to go further
         if timeout:
             while time.time() < timeout:
                 pass
@@ -66,7 +89,7 @@ class UART:
         self._serial.write(f'{cmd}\r\n'.encode('ascii'))
         Logger.log_info(f'Sent command: {cmd}; Expecting in answer: {expected}; Timeout: {timeout};')
 
-        time.sleep(0.1)
+        time.sleep(0.2)
 
         timeout = time.time() + timeout if timeout else None
 
