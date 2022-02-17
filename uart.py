@@ -34,7 +34,7 @@ class UART:
     def send_byte(self, cmd):
         self._serial.write(serial.to_bytes([cmd]))
 
-    def send_cmd(self, command: str = None, expected: str = None, timeout: float = None) -> bool:
+    def send_cmd(self, command: str = None, expected: str = None, timeout: float = 2.0) -> bool:
         """
         Send command and await for expected answer if defined, else wait for timeout
 
@@ -45,7 +45,7 @@ class UART:
         expected: str
             Expected answer to find in serial output
         timeout: float
-            Timeout for expecting answer or only wait time
+            Timeout for expecting answer or only wait time, default is 2.0
 
         Returns
         -------
@@ -54,36 +54,42 @@ class UART:
         """
 
         # Exit function with warning if no command to send defined
-        if not command:
-            Logger.log_warning(f'No command to send defined')
-            return False
 
-        Logger.log_info(f'Sent command: {command}; Expecting in answer: {expected}; Timeout: {timeout};')
-
-        self._serial.write(f'{command}\r\n'.encode('ascii'))
-        time.sleep(config.MESSAGE_PROPAGATION_TIME)
-
-        timeout = time.time() + timeout
-
-        # Wait for occurrence of expected string
-        if expected and timeout:
-            while not any(expected in s for s in self.get_rx_buf()) and time.time() < timeout:
-                pass
-
-            if time.time() >= timeout:
-                Logger.log_warning(f'Timeout occurred while sending: {command} and waiting for: {expected}')
+        try:
+            if not command:
+                Logger.log_warning(f'No command to send defined')
                 return False
 
-        # If only timeout is defined, wait max time to go further
-        if timeout:
-            while time.time() < timeout:
-                pass
+            Logger.log_info(f'Sent command: {command}; Expecting in answer: {expected}; Timeout: {timeout};')
 
-        # If expected argument is present, return True or False only
-        if expected:
-            if any(expected in s for s in self.get_rx_buf()):
+            self._serial.write(f'{command}\r\n'.encode('ascii'))
+            time.sleep(config.MESSAGE_PROPAGATION_TIME)
+
+            timeout = time.time() + timeout
+
+            # Wait for occurrence of expected string, if not return False
+            if expected and timeout:
+                while not any(expected in s for s in self.get_rx_buf()) and time.time() < timeout:
+                    pass
+
+                if time.time() >= timeout:
+                    Logger.log_warning(f'Timeout occurred while sending: {command} and waiting for: {expected}')
+                    return False
+
+                # If expected argument is present, return True
+                if any(expected in s for s in self.get_rx_buf()):
+                    return True
+                return False
+
+            # If only timeout is defined, wait max time to go further
+            if not expected and timeout:
+                while time.time() < timeout:
+                    pass
                 return True
-            return False
+
+        # Before exit, always clear rx_buf
+        finally:
+            self.set_rx_buf([])
 
     def query_cmd(self, cmd, expected=None, timeout=None):
         self._serial.write(f'{cmd}\r\n'.encode('ascii'))
