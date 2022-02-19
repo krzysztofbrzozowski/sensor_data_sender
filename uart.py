@@ -180,6 +180,10 @@ class UART:
     #                 print(self._rx_buf)
 
     def serial_listener(self):
+        """
+        Main serial listener function
+        """
+
         while not self._stop_event.is_set():
             read = self._serial.readline()
             if read != bytes():
@@ -190,9 +194,12 @@ class UART:
                     Logger.log_error(e)
 
                 Logger.log_debug(f'Serial output: {self._rx_buf}')
-                # time.sleep(0.01)
 
     def start_serial_listen_thread(self):
+        """
+        Run serial listener in another thread
+        """
+
         if not self._serial.isOpen():
             self._serial.open()
         self._serial_thread = threading.Thread(target=self.serial_listener, args=())
