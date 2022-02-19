@@ -30,3 +30,9 @@ sudo raspi-config > Interface Options > Serial Port (Enable)
 'Would you like the serial port hardware to be enabled?' > Yes
 Finish > 'Would you like to reboot now?' > Yes
 ```
+
+
+## How to run tests
+```
+pytest -v  tests/test_serial_query_cmd_function.py tests/test_serial_send_cmd_function.py
+```
