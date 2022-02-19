@@ -34,7 +34,7 @@ class UART:
     def send_byte(self, cmd):
         self._serial.write(serial.to_bytes([cmd]))
 
-    def send_cmd(self, command: str = None, expected: str = None, timeout: float = 2.0) -> bool:
+    def send_cmd(self, command: str = None, response: str = None, timeout: float = 2.0) -> bool:
         """
         Send command and await for expected answer if defined, else wait for timeout
 
@@ -42,8 +42,8 @@ class UART:
         ----------
         command: str
             Command send via UART
-        expected: str
-            Expected answer to find in serial output
+        response: str
+            Expected response to find in serial output
         timeout: float
             Timeout for expecting answer or only wait time, default is 2.0
 
@@ -53,14 +53,15 @@ class UART:
             True if expected answer occurred else False
         """
 
-        # Exit function with warning if no command to send defined
-
         try:
+            # Exit function with warning if no command to send defined
             if not command:
                 Logger.log_warning(f'No command to send defined')
                 return False
 
-            Logger.log_info(f'Sent command: {command}; Expecting in answer: {expected}; Timeout: {timeout};')
+            Logger.log_info(f'Sent command: {command};'
+                            f'Expecting response in answer: {response};'
+                            f'Timeout: {timeout};')
 
             self._serial.write(f'{command}\r\n'.encode('ascii'))
             time.sleep(config.MESSAGE_PROPAGATION_TIME)
@@ -68,21 +69,21 @@ class UART:
             timeout = time.time() + timeout
 
             # Wait for occurrence of expected string, if not return False
-            if expected and timeout:
-                while not any(expected in s for s in self.get_rx_buf()) and time.time() < timeout:
+            if response and timeout:
+                while not any(response in s for s in self.get_rx_buf()) and time.time() < timeout:
                     pass
 
                 if time.time() >= timeout:
-                    Logger.log_warning(f'Timeout occurred while sending: {command} and waiting for: {expected}')
+                    Logger.log_warning(f'Timeout occurred while sending: {command} and waiting for: {response}')
                     return False
 
-                # If expected argument is present, return True
-                if any(expected in s for s in self.get_rx_buf()):
+                # If response argument is present, return True
+                if any(response in s for s in self.get_rx_buf()):
                     return True
                 return False
 
             # If only timeout is defined, wait max time to go further
-            if not expected and timeout:
+            if not response and timeout:
                 while time.time() < timeout:
                     pass
                 return True
@@ -91,33 +92,63 @@ class UART:
         finally:
             self.set_rx_buf([])
 
-    def query_cmd(self, cmd, expected=None, timeout=None):
-        self._serial.write(f'{cmd}\r\n'.encode('ascii'))
-        Logger.log_info(f'Sent command: {cmd}; Expecting in answer: {expected}; Timeout: {timeout};')
+    def query_cmd(self, command: str = None, final_response: str = None, timeout: float = 2.0) -> list:
+        """
+        Send command and await for final_response if defined, else wait for timeout
 
-        time.sleep(0.2)
+        Parameters
+        ----------
+        command: str
+            Command send via UART
+        final_response: str
+            Expected final response to find in serial output
+        timeout: float
+            Timeout for expecting answer or only wait time, default is 2.0
 
-        timeout = time.time() + timeout if timeout else None
+        Returns
+        -------
+        list
+            List of returned values if final response occurred else empty list
+        """
 
-        # Wait for occurrence of expected string
-        if expected and timeout:
-            while not any(expected in s for s in self.get_rx_buf()) and time.time() < timeout:
-                pass
+        try:
+            # Exit function with warning if no command to send defined
+            if not command:
+                Logger.log_warning(f'No command to send defined')
+                return []
 
-            if time.time() >= timeout:
-                Logger.log_warning(f'Timeout occurred while: {cmd}')
+            Logger.log_info(f'Sent command: {command};'
+                            f'Expecting final response in answer: {final_response}; '
+                            f'Timeout: {timeout};')
 
-        if not expected and timeout:
-            while time.time() < timeout:
-                pass
+            self._serial.write(f'{command}\r\n'.encode('ascii'))
+            time.sleep(config.MESSAGE_PROPAGATION_TIME)
 
-            if time.time() >= timeout:
-                Logger.log_warning(f'Timeout occurred while: {cmd}')
+            timeout = time.time() + timeout
 
-        local_rx_buf = self.get_rx_buf()
-        self.set_rx_buf([])
+            # Wait for occurrence of expected string, if not return empty list
+            if final_response and timeout:
+                while not any(final_response in s for s in self.get_rx_buf()) and time.time() < timeout:
+                    pass
 
-        return local_rx_buf
+                if time.time() >= timeout:
+                    Logger.log_warning(f'Timeout occurred while sending: {command} and waiting for: {final_response}')
+                    return []
+
+                # If final response argument is present, return True
+                if any(final_response in s for s in self.get_rx_buf()):
+                    return self.get_rx_buf()
+                return []
+
+            # If only timeout is defined, wait max time to go further
+            if not final_response and timeout:
+                while time.time() < timeout:
+                    pass
+                return self.get_rx_buf()
+
+        # Before exit, always clear rx_buf
+        finally:
+            self.set_rx_buf([])
 
     def query_data(self, data, expected=None, timeout=None):
         timeout = time.time() + timeout if timeout else None
@@ -134,7 +165,7 @@ class UART:
                 pass
 
         tmp = self.get_rx_buf()
-        self.set_rx_buf([])
+
         return tmp
 
     # def serial_listener(self):
