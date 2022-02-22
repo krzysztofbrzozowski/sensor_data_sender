@@ -31,14 +31,14 @@ class TestSerialSendCmdFunction:
         assert True
 
     # Method send_cmd tests
-    def test_send_cmd_no_command_to_send_returns_false(self):
+    def test_send_cmd_verify_no_command_to_send_returns_false(self):
         self.uart.start_serial_listen_thread()
         self.result = self.uart.send_cmd(command=None, response=None, timeout=None)
         self.uart.stop_serial_listen_thread()
 
         assert self.result is False
 
-    def test_send_cmd_response_not_in_answer_returns_false(self):
+    def test_send_cmd_verify_response_not_in_answer_returns_false(self):
         self.uart.start_serial_listen_thread()
         self.result = self.uart.send_cmd(command='AT', response='not_in_answer', timeout=1)
         self.uart.stop_serial_listen_thread()
@@ -88,14 +88,14 @@ class TestSerialSendCmdFunction:
         self.result = True if abs(time_end) < 2.0 + config.MESSAGE_PROPAGATION_TIME + 0.01 else False
         assert self.result is True
 
-    def test_send_cmd_find_response_returns_true(self):
+    def test_send_cmd_verify_that_finding_response_returns_true(self):
         self.uart.start_serial_listen_thread()
         self.result = self.uart.send_cmd(command='AT', response='OK', timeout=1)
         self.uart.stop_serial_listen_thread()
 
         assert self.result is True
 
-    def test_send_cmd_timeout_not_working_if_find_correct_response(self):
+    def test_send_cmd_verify_timeout_not_working_if_find_correct_response(self):
         import time
 
         self.uart.start_serial_listen_thread()
@@ -108,7 +108,7 @@ class TestSerialSendCmdFunction:
         self.result = True if abs(time_end) < 0.5 + config.MESSAGE_PROPAGATION_TIME else False
         assert self.result is True
 
-    def test_send_cmd_rx_buffer_clearing_after_message(self):
+    def test_send_cmd_verify_rx_buffer_clearing_after_message(self):
         self.uart.start_serial_listen_thread()
         result_return_msg = self.uart.send_cmd(command='AT', response='OK', timeout=1)
         self.uart.stop_serial_listen_thread()
@@ -118,7 +118,7 @@ class TestSerialSendCmdFunction:
         result_rx_buffer_is_empty = True if not len(self.uart.get_rx_buf()) else False
         assert result_rx_buffer_is_empty is True
 
-    def test_send_cmd_10_messages_received_via_serial(self):
+    def test_send_cmd_verify_10_responses_received_via_serial(self):
         self.uart.start_serial_listen_thread()
 
         self.result = True
@@ -131,7 +131,7 @@ class TestSerialSendCmdFunction:
 
         assert self.result is True
 
-    def test_send_cmd_100_messages_received_via_serial(self):
+    def test_send_cmd_verify_100_responses_received_via_serial(self):
         self.uart.start_serial_listen_thread()
 
         self.result = True

@@ -200,8 +200,12 @@ class UART:
         Run serial listener in another thread
         """
 
+        if self._stop_event.is_set():
+            self._stop_event.clear()
+
         if not self._serial.isOpen():
             self._serial.open()
+
         self._serial_thread = threading.Thread(target=self.serial_listener, args=())
         self._serial_thread.start()
 

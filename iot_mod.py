@@ -16,9 +16,9 @@ class IoTMod:
             cls._initialize_serial = True
 
     @classmethod
-    def deinitialize_serial(cls):
+    def terminate_serial(cls):
         if cls._initialize_serial:
-            SIM7000.deinitialize_serial()
+            SIM7000.terminate_serial()
             cls._initialize_serial = False
 
     @classmethod
