@@ -15,27 +15,34 @@ class SIM7000:
 
     @classmethod
     def initialize_serial(cls):
-        # TODO There is no general timeout in 'initialize_serial' method: write max retry and the test for it
-        # TODO Use only True or False
+        """
+        Fist initialization of UART communication
+        It might occur that first time, loop will do few times before correct answer received
+        """
+        init_timeout = time.time() + 2.5
+
         cls._uart.start_serial_listen_thread()
-        while 'OK' not in cls._uart.query_cmd('AT', expected=None, timeout=0.1):
-            cls._uart.query_cmd('AT', 'OK', timeout=0.1)
-            time.sleep(0.1)
 
-        logger.Logger.log_info('Serial initialized')
+        while not cls._uart.send_cmd('AT', 'OK', timeout=0.5) and time.time() < init_timeout:
+            pass
 
+        if time.time() >= init_timeout:
+            return False
+        return True
 
     @classmethod
-    def deinitialize_serial(cls):
+    def terminate_serial(cls):
         """
-        Deinitialize serial listening thread - usable when running tests
+        Terminate serial listening thread
         """
         cls._uart.stop_serial_listen_thread()
 
+    # TODO - to remove?
     @classmethod
     def send_cmd(cls, cmd):
         cls._uart.send_cmd(cmd)
 
+    # TODO - to remove?
     @classmethod
     def query_cmd(cls, cmd, timeout):
         return cls._uart.query_cmd(cmd, timeout=timeout)

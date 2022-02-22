@@ -31,7 +31,7 @@ class TestSerialQueryCmdFunction:
         assert True
 
     # Method query_cmd tests
-    def test_query_cmd_no_command_to_send_returns_empty_list(self):
+    def test_query_cmd_verify_no_command_to_send_returns_empty_list(self):
         self.uart.start_serial_listen_thread()
         rx = self.uart.query_cmd(command=None, final_response=None, timeout=None)
         self.uart.stop_serial_listen_thread()
@@ -39,7 +39,7 @@ class TestSerialQueryCmdFunction:
         self.result = False if not len(rx) else True
         assert self.result is False
 
-    def test_query_cmd_expected_final_response_not_in_answer_returns_empty_list(self):
+    def test_query_cmd_verify_expected_final_response_not_in_answer_returns_empty_list(self):
         self.uart.start_serial_listen_thread()
         rx = self.uart.query_cmd(command='ATI', final_response='not_in_answer', timeout=1)
         self.uart.stop_serial_listen_thread()
@@ -91,7 +91,7 @@ class TestSerialQueryCmdFunction:
         self.result = True if abs(time_end) < 2.0 + config.MESSAGE_PROPAGATION_TIME + 0.01 else False
         assert self.result is True
 
-    def test_query_cmd_find_expected_final_response_returns_rx_buffer(self):
+    def test_query_cmd_verify_that_finding_response_returns_rx_buffer(self):
         self.uart.start_serial_listen_thread()
         rx = self.uart.query_cmd(command='ATI', final_response='OK', timeout=1)
         self.uart.stop_serial_listen_thread()
@@ -99,7 +99,7 @@ class TestSerialQueryCmdFunction:
         self.result = True if 'SIM7000E R1351' in rx else False
         assert self.result is True
 
-    def test_query_cmd_timeout_not_working_if_find_correct_final_response(self):
+    def test_query_cmd_verify_timeout_not_working_if_find_correct_final_response(self):
         import time
 
         self.uart.start_serial_listen_thread()
@@ -112,7 +112,7 @@ class TestSerialQueryCmdFunction:
         self.result = True if abs(time_end) < 0.5 + config.MESSAGE_PROPAGATION_TIME else False
         assert self.result is True
 
-    def test_query_cmd_rx_buffer_clearing_after_message(self):
+    def test_query_cmd_verify_rx_buffer_clearing_after_message(self):
         self.uart.start_serial_listen_thread()
         rx = self.uart.query_cmd(command='ATI', final_response='OK', timeout=1)
         self.uart.stop_serial_listen_thread()
@@ -123,7 +123,7 @@ class TestSerialQueryCmdFunction:
         result_rx_buffer_is_empty = True if not len(self.uart.get_rx_buf()) else False
         assert result_rx_buffer_is_empty is True
 
-    def test_query_cmd_10_messages_received_via_serial(self):
+    def test_query_cmd_verify_10_responses_received_via_serial(self):
         self.uart.start_serial_listen_thread()
 
         self.result = True
@@ -136,7 +136,7 @@ class TestSerialQueryCmdFunction:
 
         assert self.result is True
 
-    def test_query_cmd_100_messages_received_via_serial(self):
+    def test_query_cmd_verify_100_responses_received_via_serial(self):
         self.uart.start_serial_listen_thread()
 
         self.result = True
