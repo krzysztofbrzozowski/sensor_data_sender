@@ -8,33 +8,6 @@ import config
 
 import dev_sim7000
 
-# class TestDevSim7000:
-#     @pytest.fixture(autouse=True)
-#     def setup_startup(self):
-#         self.uart = UART(port=config.SERIAL_DARWIN if system() == 'Darwin' else config.SERIAL_LINUX, baudrate=9600)
-#
-#     @pytest.fixture(autouse=True)
-#     def setup_cleanup(self):
-#         self.exception = ''
-#         self.result = False
-#
-#     @pytest.fixture
-#     def mock_send_cmd(self, mocker):
-#         return mocker.patch('cls._uart.send_cmd')
-#
-#
-#     def test_any_serial_device_is_connected(self):
-#         try:
-#             if isinstance(self.uart, UART):
-#                 self.result = True
-#         except BaseException as err:
-#             self.exception = err
-#
-#         assert self.result is True, self.exception
-#
-#     def test_initialize_serial_timeout_while_waiting_for_wrong_answer(self):
-#         self.mock_send_cmd.return_value = False
-
 
 class TestDevSim7000:
     @pytest.fixture(autouse=True)
