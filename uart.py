@@ -31,8 +31,45 @@ class UART:
     #     time.sleep(0.01)
     #     self.set_rx_buf([])
 
-    def send_byte(self, cmd):
-        self._serial.write(serial.to_bytes([cmd]))
+    def send_byte(self, command: int = 0, response: str = None, timeout: float = 2.0) -> bool:
+        try:
+            # Exit function with warning if no command to send defined
+            if not command:
+                Logger.log_warning(f'No command to send defined')
+                return False
+
+            Logger.log_info(f'Sent command: {command};'
+                            f'Expecting response in answer: {response};'
+                            f'Timeout: {timeout};')
+
+            self._serial.write(serial.to_bytes([command]))
+            time.sleep(config.MESSAGE_PROPAGATION_TIME)
+
+            timeout = time.time() + timeout
+
+            # Wait for occurrence of expected string, if not return False
+            if response and timeout:
+                while not any(response in s for s in self.get_rx_buf()) and time.time() < timeout:
+                    pass
+
+                if time.time() >= timeout:
+                    Logger.log_warning(f'Timeout occurred while sending: {command} and waiting for: {response}')
+                    return False
+
+                # If response argument is present, return True
+                if any(response in s for s in self.get_rx_buf()):
+                    return True
+                return False
+
+            # If only timeout is defined, wait max time to go further
+            if not response and timeout:
+                while time.time() < timeout:
+                    pass
+                return True
+
+            # Before exit, always clear rx_buf
+        finally:
+            self.set_rx_buf([])
 
     def send_cmd(self, command: str = None, response: str = None, timeout: float = 2.0) -> bool:
         """

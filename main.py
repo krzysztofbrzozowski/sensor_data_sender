@@ -1,5 +1,6 @@
 import config
-# from dev_sim7000 import *
+from config_restricted import PHONE_NO
+from dev_sim7000 import *
 # from dev_stemma import *
 from iot_mod import IoTMod as iot_mod
 from API_requests import APIRequests as api_requests
@@ -35,5 +36,7 @@ if __name__ == '__main__':
     # }
     #
     # api_requests.post(url=post_url, payload=payload_plant_readings['readings'])
+
+    SIM7000.send_sms(phone_no=PHONE_NO, message='Lorem Ipsum')
 
     pass
