@@ -152,7 +152,11 @@ class SIM7000:
         cls._uart.send_cmd(command=f'AT+CNMI=2,1,0,0,0', response='OK', timeout=1)
         cls._uart.send_cmd(command=f'AT+CMGS="{phone_no}"', response='>', timeout=1)
         cls._uart.send_cmd(command=f'{message}', response=f'> {message}', timeout=10)
-        cls._uart.send_byte(command=0x1A, response='OK', timeout=10)
+
+        if not cls._uart.send_byte(command=0x1A, response='OK', timeout=10):
+            Logger.log_error('SMS not send')
+            SysVarManager.set_sysvar(sysvar='sms_data_send', value='Error')
+            return False
 
         return True
 
