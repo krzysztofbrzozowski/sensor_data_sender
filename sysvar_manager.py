@@ -8,8 +8,10 @@
 import shelve
 
 init_sysvar_dict = {
-    'serial_init':  None,
-    'apn_init':     None,
+    'serial_init':          None,
+    'apn_init':             None,
+
+    'sms_data_send':        None
 }
 
 
