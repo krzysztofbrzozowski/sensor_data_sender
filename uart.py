@@ -38,9 +38,9 @@ class UART:
                 Logger.log_warning(f'No command to send defined')
                 return False
 
-            Logger.log_info(f'Sent command: {command};'
-                            f'Expecting response in answer: {response};'
-                            f'Timeout: {timeout};')
+            Logger.log_debug(f'Sent command: {command};'
+                             f'Expecting response in answer: {response};'
+                             f'Timeout: {timeout};')
 
             self._serial.write(serial.to_bytes([command]))
             time.sleep(config.MESSAGE_PROPAGATION_TIME)
@@ -96,9 +96,9 @@ class UART:
                 Logger.log_warning(f'No command to send defined')
                 return False
 
-            Logger.log_info(f'Sent command: {command};'
-                            f'Expecting response in answer: {response};'
-                            f'Timeout: {timeout};')
+            Logger.log_debug(f'Sent command: {command};'
+                             f'Expecting response in answer: {response};'
+                             f'Timeout: {timeout};')
 
             self._serial.write(f'{command}\r\n'.encode('ascii'))
             time.sleep(config.MESSAGE_PROPAGATION_TIME)
@@ -154,9 +154,9 @@ class UART:
                 Logger.log_warning(f'No command to send defined')
                 return []
 
-            Logger.log_info(f'Sent command: {command};'
-                            f'Expecting final response in answer: {final_response}; '
-                            f'Timeout: {timeout};')
+            Logger.log_debug(f'Sent command: {command};'
+                             f'Expecting final response in answer: {final_response}; '
+                             f'Timeout: {timeout};')
 
             self._serial.write(f'{command}\r\n'.encode('ascii'))
             time.sleep(config.MESSAGE_PROPAGATION_TIME)
@@ -186,35 +186,6 @@ class UART:
         # Before exit, always clear rx_buf
         finally:
             self.set_rx_buf([])
-
-    def query_data(self, data, expected=None, timeout=None):
-        timeout = time.time() + timeout if timeout else None
-
-        self._serial.write(f'{data}\r\n'.encode('ascii'))
-        time.sleep(0.05)
-
-        if expected and timeout:
-            while expected not in self.get_rx_buf() and time.time() < timeout:
-            # while not any(expected in word for word in self.get_rx_buf()) and time.time() < timeout:
-                pass
-        if timeout:
-            while time.time() < timeout:
-                pass
-
-        tmp = self.get_rx_buf()
-
-        return tmp
-
-    # def serial_listener(self):
-    #     while not self._stop_event.is_set():
-    #         read = self._serial.readline()
-    #         if read != bytes():
-    #             print(read)
-    #             read = read.strip().decode()
-    #             self._rx_buf.append(read)
-    #
-    #             if config.DEBUG:
-    #                 print(self._rx_buf)
 
     def serial_listener(self):
         """
