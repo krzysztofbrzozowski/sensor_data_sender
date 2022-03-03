@@ -36,6 +36,7 @@ class SIM7000:
             SysVarManager.set_sysvar(sysvar='serial_init', value='Error')
             return False
 
+        Logger.log_info('UART communication initialized')
         return True
 
     @classmethod
@@ -71,6 +72,7 @@ class SIM7000:
             SysVarManager.set_sysvar(sysvar='apn_init', value='Error')
             return False
 
+        Logger.log_info('APN initialized')
         return True
 
     @classmethod
@@ -104,44 +106,71 @@ class SIM7000:
         cls._uart.send_cmd(command=f'AT+SAPBR=0,1', response='OK', timeout=1)
 
     @classmethod
-    def send_GET_request(cls, url: str, timeout: int = 10):
-        """Send GET request with default timeout 10s
-        :param: url: URL of the api containing exact address where get data from
-        :param: timeout: when not receive any JSON data, timeout request
-        :return: JSON data if any received, else None"""
-        timeout = time.time() + timeout
+    def send_get_request(cls, url: str, timeout: float = 10.0) -> list:
+        """
+        Send GET request with default timeout 10s
 
-        cls._uart.send_cmd(f'AT+HTTPPARA="URL","{url}"', response='OK', timeout=1)         # Init HTTP service
-        cls._uart.send_cmd(f'AT+HTTPACTION=0', response='OK', timeout=1)                   # GET session start
+        Parameters
+        ----------
+        url: str
+            URL of the api containing exact address where get data from
+        timeout: float
+            when not receive any JSON data, timeout request
 
-        # TODO Can be removed, only while not loop leave?
-        response = cls._uart.query_cmd(f'AT+HTTPREAD', final_response='OK', timeout=1)
-        while not any('{' and '}' in word for word in response) and time.time() < timeout:
-            response = cls._uart.query_cmd(f'AT+HTTPREAD', final_response='OK', timeout=1)
-            time.sleep(1)
+        Returns
+        -------
+        list
+        """
+        # Init HTTP service
+        cls._uart.send_cmd(f'AT+HTTPPARA="URL","{url}"', response='OK', timeout=1)
+        # GET session start
+        cls._uart.send_cmd(f'AT+HTTPACTION=0', response='+HTTPACTION:', timeout=20)
+        # Read the data
+        response = cls._uart.query_cmd(f'AT+HTTPREAD', final_response='OK', timeout=20)
 
-        try:
-            return json.loads(response[response.index('OK') - 1])
+        if 'OK' in response:
+            return response
 
-        except Exception as e:
-            print(e)
-            return None
+        return []
 
     @classmethod
-    def send_POST_request(cls, url: str, payload: str, content: str = 'JSON'):
-        cls._uart.query_cmd(f'AT+HTTPPARA="URL","{url}"', expected='OK', timeout=1)                 # Init HTTP service
+    def send_post_request(cls, url: str, payload: str, content: str = 'JSON'):
+        """
+         Send POST request with default timeout 10s
+
+         Parameters
+         ----------
+         url: str
+             URL of the api containing exact address where get data from
+         payload: string
+             payload to be posted
+         content: str
+            type of content to be posted to the server
+
+         Returns
+         -------
+         list
+         """
+        cls._uart.query_cmd(f'AT+HTTPPARA="URL","{url}"', final_response='OK', timeout=1)                 # Init HTTP service
         cls._uart.query_cmd(f'AT+HTTPPARA="CONTENT",'
                             f'{"application/json" if content == "JSON" else "application/x-www-form-urlencoded"}',
-                            expected='OK', timeout=1)
-        cls._uart.query_cmd(f'AT+HTTPDATA={len(payload)},2000', expected='OK', timeout=2)           # 1000 - max time for input the data
-        cls._uart.query_data(f'{payload}', timeout=2)
-        cls._uart.query_cmd(f'AT+HTTPACTION=1', expected='OK', timeout=2)
+                            final_response='OK', timeout=1)
+        # TODO queried data shall have variable timeout
+        cls._uart.query_cmd(f'AT+HTTPDATA={len(payload)},2000', final_response='OK', timeout=10)           # 1000 - max time for input the data
+        cls._uart.query_cmd(f'{payload}', timeout=10)
+        cls._uart.query_cmd(f'AT+HTTPACTION=1', final_response='OK', timeout=10)
 
-    # TODO when there is long message sen as two messages?
     @classmethod
-    def send_sms(cls, phone_no: str, message: str):
+    def send_sms(cls, phone_no: str, message: str) -> bool:
         """
         Send SMS message (SMS data handler)
+
+        Parameters
+        ----------
+        phone_no: str
+            Phone number message send to
+        message: str
+            Text message
 
         Returns
         -------
@@ -163,7 +192,6 @@ class SIM7000:
     @classmethod
     def send_byte(cls, byte):
         cls._uart.send_byte(byte)
-
 
     # TODO - to remove?
     @classmethod

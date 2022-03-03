@@ -9,34 +9,36 @@ from sysvar_manager import SysVarManager as SysVarMgr
 
 
 if __name__ == '__main__':
-    iot_mod.initialize_serial()
-    # iot_mod.initialize_apn()
-    #
-    # current_time = iot_mod.send_GET_request(url=f'{config.API_URL}/timesync')
-    # print('GET MESSAGE', current_time)
+    # TODO Fix initialize serial to be always on begin, why?
+    SIM7000.initialize_serial()
+    # SIM7000.initialize_apn()
+    # SIM7000.initialize_requests()
+
+    # current_time = SIM7000.send_get_request(url=f'{config.API_URL}/timesync')
+    # average_temperature_data = SIM7000.send_get_request(url=f'{config.API_URL}/get-sensor-temperature/sensor_1/10')
+    # print(average_temperature_data)
     #
     # payload = '{"mac_address": "00:00:00:00:00:00", "temperature": "22", "humidity": "33", "pressure": "888", "adc": "4.1"}'
-    # # payload = 'mac_address=00%3A00%3A00%3A00%3A00%3A00&temperature=11&humidity=22&pressure=777&adc=3.9'
-    #
-    # iot_mod.send_POST_request(url=f'{config.API_URL}', payload=payload, content='JSON')
+    # # # payload = 'mac_address=00%3A00%3A00%3A00%3A00%3A00&temperature=11&humidity=22&pressure=777&adc=3.9'
+    # SIM7000.send_post_request(url=f'{config.API_URL}', payload=payload, content='JSON')
     # SIM7000.send_sms(phone_no=config.PHONE_NO, msg=payload)
 
     # SOIL_SENSORS = 3
     # ss_sensors = {f'ss_sensor_{addr}': STEMMA(addr=addr) for addr in range(0x36, 0x36 + SOIL_SENSORS)}
 
     # Post data to API using local connection
-    # post_url = f'{config.API_URL}/post-pms-data'
-    #
+    post_url = f'{config.API_URL}/post-pms-data'
+
     # payload_plant_readings = {
     #     'readings': [
-    #         {'hex_address': 0x31, 'temperature': 21, 'humidity': 501},
-    #         {'hex_address': 32, 'temperature': 22, 'humidity': 502},
-    #         {'hex_address': 33, 'temperature': 23, 'humidity': 503}
+    #         {'hex_address': 31, 'temperature': 21, 'humidity': 501},
+    #         # {'hex_address': 32, 'temperature': 22, 'humidity': 502},
+    #         # {'hex_address': 33, 'temperature': 23, 'humidity': 503}
     #     ],
     # }
     #
     # api_requests.post(url=post_url, payload=payload_plant_readings['readings'])
 
-    SIM7000.send_sms(phone_no=PHONE_NO, message='Lorem Ipsum')
+    # SIM7000.send_sms(phone_no=PHONE_NO, message='Lorem Ipsum')
 
     pass
