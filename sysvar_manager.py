@@ -35,3 +35,7 @@ class SysVarManager:
     def init_sysvar_db(cls):
         for k, v in init_sysvar_dict.items():
             cls.set_sysvar(sysvar=k, value=v)
+
+
+if __name__ == '__main__':
+    SysVarManager.init_sysvar_db()

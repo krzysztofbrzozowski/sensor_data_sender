@@ -16,7 +16,14 @@ class APIRequests:
                    'Content-Type': 'application/json'}
 
         request = requests.post(url=url, json=payload, headers=headers)
-        request_status = request.status_code
+        request_status = request.content
         request.close()
         print(f'Request status: {request_status}')
         return request_status
+
+
+if __name__ == '__main__':
+    post_url = f'{config.API_URL}/post-pms-data'
+    payload = {"hex_address": 31, "temperature": 21, "humidity": 501}
+
+    APIRequests.post(url=post_url, payload=payload)

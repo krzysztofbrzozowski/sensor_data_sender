@@ -23,6 +23,7 @@ class TestDevSim7000:
         )
 
         time_start = time.time()
+        # TODO sysvar has to be absolute path? Tests not passing because it can not find path sysvar/sysvar(.db)
         dev_sim7000.SIM7000.initialize_serial()
         time_end = time.time() - time_start
         dev_sim7000.SIM7000.terminate_serial()
