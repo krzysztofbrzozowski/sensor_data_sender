@@ -134,7 +134,7 @@ class SIM7000:
         return []
 
     @classmethod
-    def send_post_request(cls, url: str, payload: str, content: str = 'JSON'):
+    def send_post_request(cls, url: str, payload: any, auth_token: str = None, content: str = 'JSON'):
         """
          Send POST request with default timeout 10s
 
@@ -142,8 +142,10 @@ class SIM7000:
          ----------
          url: str
              URL of the api containing exact address where get data from
-         payload: string
+         payload: any
              payload to be posted
+         auth_token: str
+            authorization token
          content: str
             type of content to be posted to the server
 
@@ -155,9 +157,14 @@ class SIM7000:
         cls._uart.query_cmd(f'AT+HTTPPARA="CONTENT",'
                             f'{"application/json" if content == "JSON" else "application/x-www-form-urlencoded"}',
                             final_response='OK', timeout=1)
+
+        if auth_token:
+            cls._uart.query_cmd(f'AT+HTTPPARA="USERDATA","Authorization: Token {auth_token}"',
+                                final_response='OK', timeout=1)
+
         # TODO queried data shall have variable timeout
-        cls._uart.query_cmd(f'AT+HTTPDATA={len(payload)},2000', final_response='OK', timeout=10)           # 1000 - max time for input the data
-        cls._uart.query_cmd(f'{payload}', timeout=10)
+        cls._uart.query_cmd(f'AT+HTTPDATA={len(payload)},5000', final_response='DOWNLOAD', timeout=6)           # 1000 - max time for input the data
+        cls._uart.query_cmd(f'{payload}', final_response='OK', timeout=6)
         cls._uart.query_cmd(f'AT+HTTPACTION=1', final_response='OK', timeout=10)
 
     @classmethod
