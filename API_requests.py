@@ -1,4 +1,5 @@
 import requests
+import json
 
 import config, config_restricted
 
@@ -24,6 +25,8 @@ class APIRequests:
 
 if __name__ == '__main__':
     post_url = f'{config.API_URL}/post-pms-data'
-    payload = {"hex_address": 31, "temperature": 21, "humidity": 501}
+    payload = [{"hex_address": 31, "temperature": 21, "humidity": 501}]
+
+
 
     APIRequests.post(url=post_url, payload=payload)
