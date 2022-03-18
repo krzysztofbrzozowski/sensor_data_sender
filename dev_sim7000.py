@@ -136,23 +136,23 @@ class SIM7000:
     @classmethod
     def send_post_request(cls, url: str, payload: any, auth_token: str = None, content: str = 'JSON'):
         """
-         Send POST request with default timeout 10s
+        Send POST request with default timeout 10s
 
-         Parameters
-         ----------
-         url: str
-             URL of the api containing exact address where get data from
-         payload: any
-             payload to be posted
-         auth_token: str
-            authorization token
-         content: str
-            type of content to be posted to the server
+        Parameters
+        ----------
+        url: str
+         URL of the api containing exact address where get data from
+        payload: any
+         payload to be posted
+        auth_token: str
+        authorization token
+        content: str
+        type of content to be posted to the server
 
-         Returns
-         -------
-         list
-         """
+        Returns
+        -------
+        list
+        """
         cls._uart.query_cmd(f'AT+HTTPPARA="URL","{url}"', final_response='OK', timeout=1)                 # Init HTTP service
         cls._uart.query_cmd(f'AT+HTTPPARA="CONTENT",'
                             f'{"application/json" if content == "JSON" else "application/x-www-form-urlencoded"}',

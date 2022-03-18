@@ -7,6 +7,7 @@ from dev_sim7000 import *
 from iot_mod import IoTMod as iot_mod
 from API_requests import APIRequests as api_requests
 from sysvar_manager import SysVarManager as SysVarMgr
+from pms_handler import PMSHandler as PMSHandler
 # import asyncio
 
 
@@ -21,7 +22,7 @@ if __name__ == '__main__':
     # print(average_temperature_data)
     #
 
-    # # # payload = 'mac_address=00%3A00%3A00%3A00%3A00%3A00&temperature=11&humidity=22&pressure=777&adc=3.9'
+    # payload = 'mac_address=00%3A00%3A00%3A00%3A00%3A00&temperature=11&humidity=22&pressure=777&adc=3.9'
     # SIM7000.send_post_request(url=f'{config.API_URL}', payload=payload, content='JSON')
     # SIM7000.send_sms(phone_no=config.PHONE_NO, msg=payload)
 
@@ -33,21 +34,33 @@ if __name__ == '__main__':
     payload_plant_readings = {
         'readings': [
             {'hex_address': 31, 'temperature': 21, 'humidity': 501},
-            {'hex_address': 32, 'temperature': 22, 'humidity': 502},
+            # {'hex_address': 32, 'temperature': 22, 'humidity': 502},
             # {'hex_address': 33, 'temperature': 23, 'humidity': 503}
         ],
     }
 
-    payload = '[{"hex_address": 31, "temperature": 22, "humidity": 499}]'
 
+    # payload = '[{"hex_address": 31, "temperature": 22, "humidity": 499}]'
     # api_requests.post(url=post_url, payload=payload_plant_readings['readings'])
-    SIM7000.send_post_request(url=f'{config.API_URL}',
+
+    # Testing regular sensor request
+    # payload_temp = '{"mac_address": "00:00:00:00:00:00","temperature": "22", "humidity": "500", "pressure": "888", "adc": "4.1"}'
+    # SIM7000.send_post_request(url=f'{config.API_URL}',
+    #                           # payload=payload_plant_readings['readings'],
+    #                           payload=payload_temp,
+    #                           auth_token=config_restricted.API_TOKEN,
+    #                           content='JSON')
+
+    # Testing pms data
+    # payload_pms = '[{"hex_address": "01", "temperature": "50", "humidity": "100"},' \
+    #               '{"hex_address": "02", "temperature": "50", "humidity": "101"}]'
+
+    payload_pms = PMSHandler.get_values()
+    print(payload_pms)
+
+    SIM7000.send_post_request(url=f'{config.API_URL}/post-pms-data',
                               # payload=payload_plant_readings['readings'],
-                              payload=payload,
+                              payload=payload_pms,
                               auth_token=config_restricted.API_TOKEN,
                               content='JSON')
 
-
-    # SIM7000.send_sms(phone_no=PHONE_NO, message='Lorem Ipsum')
-
-    pass
