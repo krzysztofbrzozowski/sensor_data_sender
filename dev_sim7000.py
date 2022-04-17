@@ -140,7 +140,7 @@ class SIM7000:
 
         Parameters
         ----------
-        url: str
+        :param url: str
          URL of the api containing exact address where get data from
         payload: any
          payload to be posted

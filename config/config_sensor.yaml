@@ -1,0 +1,15 @@
+- plant: a
+  hex_address: 31
+  read_interval: 22
+
+- plant: b
+  hex_address: 32
+  read_interval: 22
+
+- plant: c
+  hex_address: 33
+  read_interval: 22
+
+- plant: d
+  hex_address: 34
+  read_interval: 22
