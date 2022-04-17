@@ -7,7 +7,7 @@ from dev_sim7000 import *
 from iot_mod import IoTMod as iot_mod
 from API_requests import APIRequests as api_requests
 from sysvar_manager import SysVarManager as SysVarMgr
-from pms_handler import PMSHandler as PMSHandler
+from sensor_manager import SensorManager as SensorManager
 # import asyncio
 
 
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # payload_pms = '[{"hex_address": "01", "temperature": "50", "humidity": "100"},' \
     #               '{"hex_address": "02", "temperature": "50", "humidity": "101"}]'
 
-    payload_pms = PMSHandler.get_values()
+    payload_pms = SensorManager.get_values()
     print(payload_pms)
 
     SIM7000.send_post_request(url=f'{config.API_URL}/post-pms-data',
