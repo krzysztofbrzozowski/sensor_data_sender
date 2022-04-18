@@ -9,6 +9,8 @@ from uart import *
 # from logger import logger
 from sysvar_manager import SysVarManager
 
+#TEST
+from sensor_manager import SensorManager
 
 class SIM7000:
     _apn = config.APN
@@ -138,20 +140,20 @@ class SIM7000:
         """
         Send POST request with default timeout 10s
 
-        Parameters
-        ----------
-        :param url: str
-         URL of the api containing exact address where get data from
-        payload: any
-         payload to be posted
-        auth_token: str
-        authorization token
-        content: str
-        type of content to be posted to the server
+        :param: url: URL of the api containing exact address where to send data
+        :type url: str
 
-        Returns
-        -------
-        list
+        :param: payload: payload to be posted
+        :type payload: any
+
+        :param: auth_token: authorization token
+        :type auth_token: str
+
+        :param: content: type of content to be posted to the server
+        :type content: str
+
+        :return: None
+        :rtype: None
         """
         cls._uart.query_cmd(f'AT+HTTPPARA="URL","{url}"', final_response='OK', timeout=1)                 # Init HTTP service
         cls._uart.query_cmd(f'AT+HTTPPARA="CONTENT",'
@@ -163,8 +165,8 @@ class SIM7000:
                                 final_response='OK', timeout=1)
 
         # TODO queried data shall have variable timeout
-        cls._uart.query_cmd(f'AT+HTTPDATA={len(payload)},5000', final_response='DOWNLOAD', timeout=6)           # 1000 - max time for input the data
-        cls._uart.query_cmd(f'{payload}', final_response='OK', timeout=6)
+        cls._uart.query_cmd(f'AT+HTTPDATA={len(payload)},7000', final_response='DOWNLOAD', timeout=8)           # 1000 - max time for input the data
+        cls._uart.query_cmd(f'{payload}', final_response='OK', timeout=8)
         cls._uart.query_cmd(f'AT+HTTPACTION=1', final_response='OK', timeout=10)
 
     @classmethod

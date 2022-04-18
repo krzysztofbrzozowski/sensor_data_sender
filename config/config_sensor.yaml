@@ -1,6 +1,6 @@
-- id:             fcba1abf
-  plant:          a
-  hex_address:    54
+#- id:             fcba1abf
+#  plant:          a
+#  hex_address:    54
 #  read_interval:  22
 
 #- id:             f2493e8f
@@ -17,3 +17,7 @@
 #  plant:          d
 #  hex_address:    52
 ##  read_interval:  22
+
+#- id:             fcba1abf
+#  plant:          a
+- hex_address:    54

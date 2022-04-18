@@ -6,15 +6,18 @@
 """
 import time
 import yaml
-# import board
-# from adafruit_seesaw.seesaw import Seesaw
+import schedule
 
+import board
+from adafruit_seesaw.seesaw import Seesaw
+
+x = None
 
 def delay(time_sec: int):
     wait = time_sec * 10
 
     while wait:
-        print('wait...')
+        # print('wait...')
         time.sleep(0.1)
         wait -= 1
 
@@ -30,7 +33,11 @@ class SensorManager:
         ]
 
         """
+        self.i2c_bus = board.I2C()
+
         self.init_data()
+
+        self.x = 0
 
     def init_data(self):
         self.sensor_values = list()
@@ -46,37 +53,69 @@ class SensorManager:
     #         interval = sensor['read_interval']
 
     def get_readings(self):
+        # print(time.time())
         for sensor in self.sensor_values:
             sensor['temperature'], sensor['humidity'] = self.get_sensor_data(sensor['hex_address'])
 
         for sensor in self.sensor_values:
             print(sensor)
 
+        global x
+        self.x += 1
+        x = self.x
+
     def get_sensor_data(self, address):
-        # i2c_bus = board.I2C()
-        # ss = Seesaw(i2c_bus, addr=address)
+        ss = Seesaw(self.i2c_bus, addr=address)
+
+        humidity = ss.moisture_read()
+        temperature = ss.get_temp()
+
+        # # Test purposes
+        # temperature, humidity = 0, 0
         #
-        # humidity = ss.moisture_read()
-        # temperature = ss.get_temp()
-
-        # Test purposes
-        temperature, humidity = 0, 0
-
-        if address == 49:
-            temperature, humidity = 18.0, 500
-        if address == 50:
-            temperature, humidity = 19.0, 502
-        if address == 51:
-            temperature, humidity = 28.0, 505
-        if address == 52:
-            temperature, humidity = 39.0, 506
+        # if address == 49:
+        #     temperature, humidity = 18.0, 500
+        # if address == 50:
+        #     temperature, humidity = 19.0, 502
+        # if address == 51:
+        #     temperature, humidity = 28.0, 505
+        # if address == 52:
+        #     temperature, humidity = 39.0, 506
 
         return temperature, humidity
 
 
+# def schedule_task_interval(task, interval_unit, interval):
+#     """
+#     Schedule any task to be repeated forever with time interval
+#     """
+#     if interval_unit is 's':
+#         wait = interval * 1
+#
+#     if interval_unit is 'm':
+#         wait = interval * 60
+#
+#     if interval_unit is 'h':
+#         wait = interval * 60 * 60
+#
+#     while True:
+#         print('doing some task')
+#
+#         while wait:
+#             # print('wait...')
+#             time.sleep(1)
+#             wait -= 1
+
+
+
 if __name__ == '__main__':
     sensor_manager = SensorManager()
+
+    schedule.every(3).seconds.do(sensor_manager.get_readings)
+
+    schedule.run_all()
     while True:
-        sensor_manager.get_readings()
-        delay(5)
+        print(x)
+        schedule.run_pending()
+        time.sleep(1)
 
