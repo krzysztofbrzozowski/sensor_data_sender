@@ -16,8 +16,13 @@ if __name__ == '__main__':
     # with open('test.yaml', 'w') as f:
     #     data = yaml.dump(test_readings, f, sort_keys=False)
 
+    # First init has to be
+    values = {
+        'unique_id': {'plant': 'a', 'hex_address': 31, 'temperature': None, 'humidity': None},
+    }
+
     with open('../config/config_sensor.yaml') as f:
         sensors = yaml.safe_load(f)
         for x in sensors:
-            x['hex_address']
+            readings['hex_address'] = read_sensor(x['hex_address']))
             print(f'{x}')
