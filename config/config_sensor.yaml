@@ -1,15 +1,23 @@
-- plant: a
-  hex_address: 31
-  read_interval: 22
+#- id:             fcba1abf
+#  plant:          a
+#  hex_address:    54
+#  read_interval:  22
 
-- plant: b
-  hex_address: 32
-  read_interval: 22
+#- id:             f2493e8f
+#  plant:          b
+#  hex_address:    50
+##  read_interval:  22
+#
+#- id:             7b26336a
+#  plant:          c
+#  hex_address:    51
+##  read_interval:  22
+#
+#- id:             57bb327d
+#  plant:          d
+#  hex_address:    52
+##  read_interval:  22
 
-- plant: c
-  hex_address: 33
-  read_interval: 22
-
-- plant: d
-  hex_address: 34
-  read_interval: 22
+#- id:             fcba1abf
+#  plant:          a
+- hex_address:    54

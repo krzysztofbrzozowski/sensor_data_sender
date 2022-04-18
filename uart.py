@@ -147,12 +147,14 @@ class UART:
         list
             List of returned values if final response occurred else empty list
         """
-
         try:
             # Exit function with warning if no command to send defined
             if not command:
                 Logger.log_warning(f'No command to send defined')
                 return []
+
+            # Flush serial before any action
+            self.clear_all()
 
             Logger.log_debug(f'Sent command: {command};'
                              f'Expecting final response in answer: {final_response}; '
@@ -225,6 +227,7 @@ class UART:
         self._serial.flushInput()
         self._serial.flushOutput()
         self._serial.flush()
+        time.sleep(0.25)
 
 
 
