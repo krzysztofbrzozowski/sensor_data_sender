@@ -1,23 +1,25 @@
-import config
-import config_restricted
-import sysvar_manager
-from config_restricted import PHONE_NO
-from dev_sim7000 import *
-# from dev_stemma import *
-from iot_mod import IoTMod as iot_mod
-from API_requests import APIRequests as api_requests
-from sysvar_manager import SysVarManager as SysVarMgr
+import time
+
+# import config
+# import config_restricted
+# import sysvar_manager
+# from config_restricted import PHONE_NO
+# from dev_sim7000 import *
+# # from dev_stemma import *
+# from iot_mod import IoTMod as iot_mod
+# from API_requests import APIRequests as api_requests
+# from sysvar_manager import SysVarManager as SysVarMgr
 from sensor_manager import SensorManager as SensorManager
 # import asyncio
 
 
 if __name__ == '__main__':
     # TODO Fix initialize serial to be always on begin, why?
-    SIM7000.initialize_serial()
-    # SIM7000.initialize_apn()
-    # SIM7000.initialize_requests()
-    #
-    current_time = SIM7000.send_get_request(url=f'{config.API_URL}/timesync')
+    # SIM7000.initialize_serial()
+    # # SIM7000.initialize_apn()
+    # # SIM7000.initialize_requests()
+    # #
+    # current_time = SIM7000.send_get_request(url=f'{config.API_URL}/timesync')
     # average_temperature_data = SIM7000.send_get_request(url=f'{config.API_URL}/get-sensor-temperature/sensor_1/10')
     # print(average_temperature_data)
     #
@@ -29,15 +31,15 @@ if __name__ == '__main__':
     # SOIL_SENSORS = 3
     # ss_sensors = {f'ss_sensor_{addr}': STEMMA(addr=addr) for addr in range(0x36, 0x36 + SOIL_SENSORS)}
 
-    # Post data to API using local connection
-    post_url = f'{config.API_URL}/post-pms-data'
-    payload_plant_readings = {
-        'readings': [
-            {'hex_address': 31, 'temperature': 21, 'humidity': 501},
-            # {'hex_address': 32, 'temperature': 22, 'humidity': 502},
-            # {'hex_address': 33, 'temperature': 23, 'humidity': 503}
-        ],
-    }
+    # # Post data to API using local connection
+    # post_url = f'{config.API_URL}/post-pms-data'
+    # payload_plant_readings = {
+    #     'readings': [
+    #         {'hex_address': 31, 'temperature': 21, 'humidity': 501},
+    #         # {'hex_address': 32, 'temperature': 22, 'humidity': 502},
+    #         # {'hex_address': 33, 'temperature': 23, 'humidity': 503}
+    #     ],
+    # }
 
 
     # payload = '[{"hex_address": 31, "temperature": 22, "humidity": 499}]'
@@ -55,12 +57,15 @@ if __name__ == '__main__':
     # payload_pms = '[{"hex_address": "01", "temperature": "50", "humidity": "100"},' \
     #               '{"hex_address": "02", "temperature": "50", "humidity": "101"}]'
 
-    payload_pms = SensorManager.get_values()
-    print(payload_pms)
+    sensor_manager = SensorManager()
+    while True:
+        payload_pms = sensor_manager.get_all_data()
+        print(payload_pms)
+        time.sleep(5)
 
-    SIM7000.send_post_request(url=f'{config.API_URL}/post-pms-data',
-                              # payload=payload_plant_readings['readings'],
-                              payload=payload_pms,
-                              auth_token=config_restricted.API_TOKEN,
-                              content='JSON')
+    # SIM7000.send_post_request(url=f'{config.API_URL}/post-pms-data',
+    #                           # payload=payload_plant_readings['readings'],
+    #                           payload=payload_pms,
+    #                           auth_token=config_restricted.API_TOKEN,
+    #                           content='JSON')
 
