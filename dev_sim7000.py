@@ -9,8 +9,6 @@ from uart import *
 # from logger import logger
 from sysvar_manager import SysVarManager
 
-#TEST
-from sensor_manager import SensorManager
 
 class SIM7000:
     _apn = config.APN
@@ -155,6 +153,9 @@ class SIM7000:
         :return: None
         :rtype: None
         """
+        if not payload:
+            return
+
         cls._uart.query_cmd(f'AT+HTTPPARA="URL","{url}"', final_response='OK', timeout=1)                 # Init HTTP service
         cls._uart.query_cmd(f'AT+HTTPPARA="CONTENT",'
                             f'{"application/json" if content == "JSON" else "application/x-www-form-urlencoded"}',
