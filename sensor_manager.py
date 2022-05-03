@@ -10,11 +10,11 @@ import yaml
 import board
 from adafruit_seesaw.seesaw import Seesaw
 
+# TODO if code is executed from main this import might be skipped
 from logger import logger
 import logging
 
 logger = logging.getLogger('main_logger')
-logger.debug('This is a debug message elo')
 
 
 class SensorManager:
