@@ -56,7 +56,7 @@ class TestSerialQueryCmdFunction:
         time_end = time.time() - time_start
         self.uart.stop_serial_listen_thread()
 
-        # TODO Add variable timeout depending on platform e.g. RPi Zero, RPi 3B etc.
+        # TODO Add variable timeout depending on platform e.g. RPi Zero, RPi 3B etc
         self.result = True if abs(time_end) < 1 + config.MESSAGE_PROPAGATION_TIME + 0.3 else False
         assert self.result is True
 
