@@ -12,7 +12,7 @@ from sysvar_manager import SysVarManager
 
 class SIM7000:
     _apn = config.APN
-    _uart = UART(port=config.SERIAL_DARWIN if platform.system() == 'Darwin' else config.SERIAL_LINUX, baudrate=9600)
+    _uart = UART(port=config.SERIAL_DARWIN if platform.system() == 'Darwin' else config.SERIAL_LINUX, baudrate=115200)
 
     @classmethod
     def initialize_serial(cls) -> bool:
