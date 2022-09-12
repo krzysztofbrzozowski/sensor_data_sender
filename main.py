@@ -1,4 +1,3 @@
-import lo
 import schedule
 
 # import config

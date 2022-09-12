@@ -117,7 +117,7 @@ class TestSerialSendCmdFunction:
 
         result_rx_buffer_is_empty = True if not len(self.uart.get_rx_buf()) else False
         assert result_rx_buffer_is_empty is True
-
+    #
     def test_send_cmd_verify_10_responses_received_via_serial(self):
         self.uart.start_serial_listen_thread()
 
