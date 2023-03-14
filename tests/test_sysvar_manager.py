@@ -6,7 +6,7 @@
 """
 
 import pytest
-from sysvar_manager import SysVarManager, init_sysvar_dict
+from drivers_high_level.sysvar_manager import SysVarManager, init_sysvar_dict
 
 
 class TestSysVarManager:

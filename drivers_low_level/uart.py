@@ -1,7 +1,7 @@
 import threading
 import time
 import serial
-import config
+from config import config
 
 from logger.logger import Logger
 

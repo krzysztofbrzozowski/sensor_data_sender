@@ -35,7 +35,7 @@ handlers:
 #    backupCount: 5
 
 loggers:
-  sampleLogger:
+  support_logger:
     level: DEBUG
     handlers: [console, file_handler]
     propagate: yes

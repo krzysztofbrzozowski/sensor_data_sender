@@ -1,23 +1,20 @@
-import lo
 import schedule
 
 # import config
 import config_restricted
-from dev_sim7000 import *
+from drivers_low_level.dev_sim7000 import *
 # # from dev_stemma import *
 # from iot_mod import IoTMod as iot_mod
 # from API_requests import APIRequests as api_requests
 # from sysvar_manager import SysVarManager as SysVarMgr
-from sensor_manager import SensorManager as SensorManager
+from drivers_high_level.sensor_manager import SensorManager as SensorManager
 import time
 
-from logger import logger
 import logging
 
 logger = logging.getLogger('main_logger')
 
 if __name__ == '__main__':
-    pass
     # TODO Fix initialize serial to be always on begin, why?
     # Initialize serial to communicate with SIM7000
     SIM7000.initialize_serial()

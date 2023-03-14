@@ -1,13 +1,9 @@
-import json
-from datetime import datetime
-import time
 import sys
 import platform
 
-import config
 from uart import *
 # from logger import logger
-from sysvar_manager import SysVarManager
+from drivers_high_level.sysvar_manager import SysVarManager
 
 
 class SIM7000:

@@ -26,7 +26,7 @@ EnvVarLoader.add_constructor('!path', path_constructor)
 
 
 with open(os.path.join(
-        os.getenv('SENSOR_DATA_SENDER_LOGGER_DIR', None), 'config_logger.yaml'), 'r') as f:
+        os.getenv('SENSOR_DATA_SENDER_LOGGER_DIR', None), '../config/config_logger.yaml'), 'r') as f:
     config = yaml.load(f.read(), Loader=EnvVarLoader)
     logging.config.dictConfig(config)
 

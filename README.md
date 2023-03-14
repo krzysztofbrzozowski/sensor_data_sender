@@ -62,3 +62,9 @@ echo "export DYLD_LIBRARY_PATH="/usr/local/lib:$DYLD_LIBRARY_PATH"" >> ~/.zshrc
 set $SENSOR_DATA_SENDER_LOG_PATH environment variable
 echo "export SENSOR_DATA_SENDER_LOGGER_DIR=your_path_where_logger_id_defined"
 ```
+
+## TODO
+- [X] Organize project in folders
+- [ ] Remove unnecessary files
+- [ ] Distinguish pc/mac config vs rpi config to easy handle tests
+- [ ] Write some endurance tests to make sure everything is working as expected

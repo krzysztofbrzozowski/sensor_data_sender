@@ -1,5 +1,3 @@
-import time
-
 import pytest
 
 
@@ -10,7 +8,7 @@ class TestIoTHAT:
         self.result = False
 
     def test_any_response_from_iot_hat(self):
-        from dev_sim7000 import SIM7000
+        from drivers_low_level.dev_sim7000 import SIM7000
 
         SIM7000.initialize_serial()
 
@@ -22,7 +20,7 @@ class TestIoTHAT:
         assert self.result is True
 
     def test_get_date_form_server(self):
-        from dev_sim7000 import SIM7000
+        from drivers_low_level.dev_sim7000 import SIM7000
 
         SIM7000.initialize_serial()
 
