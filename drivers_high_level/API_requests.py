@@ -28,5 +28,4 @@ if __name__ == '__main__':
     payload = [{"hex_address": 31, "temperature": 21, "humidity": 501}]
 
 
-
     APIRequests.post(url=post_url, payload=payload)

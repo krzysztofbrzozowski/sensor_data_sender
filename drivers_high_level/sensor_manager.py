@@ -29,7 +29,7 @@ class SensorManager:
 
         :return: None
         """
-        with open('config/config_sensor.yaml') as f:
+        with open('../config/config_sensor.yaml') as f:
             sensors_config = yaml.safe_load(f)
 
             for sensor_config in sensors_config:

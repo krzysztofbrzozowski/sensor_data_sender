@@ -1,12 +1,6 @@
-import time
-
 import pytest
-from platform import system
 
-from uart import UART as UART
-import config
-
-import dev_sim7000
+from drivers_low_level import dev_sim7000
 
 
 class TestDevSim7000:

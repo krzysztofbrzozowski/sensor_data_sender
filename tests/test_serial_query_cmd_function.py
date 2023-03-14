@@ -1,8 +1,8 @@
 import pytest
 from platform import system
 
-from uart import UART as UART
-import config
+from drivers_low_level.uart import UART as UART
+from config import config
 
 
 class TestSerialQueryCmdFunction:

@@ -1,5 +1,4 @@
-from dev_sim7000 import *
-from sysvar_manager import SysVarManager as SysVarMgr
+from drivers_low_level.dev_sim7000 import *
 
 
 class IoTMod:
